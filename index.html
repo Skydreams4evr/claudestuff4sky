@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#0b0b1a" />
+  <title>Jukebox · Party Playlist</title>
+  <link rel="preconnect" href="https://www.gstatic.com" />
+  <link rel="preconnect" href="https://www.googleapis.com" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Setup gate (shown if config.js is missing/placeholder) ===== -->
+  <div id="setup-gate" class="gate hidden">
+    <div class="gate-card">
+      <h1>🎛️ Almost there</h1>
+      <p>This jukebox needs a <code>config.js</code> file with your Firebase settings
+         and a YouTube API key before it can run.</p>
+      <p>Copy <code>config.example.js</code> to <code>config.js</code>, fill in your
+         keys, then reload. Full steps are in the <code>README.md</code>.</p>
+      <p id="gate-detail" class="gate-detail"></p>
+    </div>
+  </div>
+
+  <!-- ===== Join screen ===== -->
+  <section id="join" class="screen join hidden">
+    <div class="join-card">
+      <div class="logo">🎵</div>
+      <h1>Party Jukebox</h1>
+      <p class="tagline">Everyone adds songs. It plays itself.</p>
+
+      <label class="field">
+        <span>Your name</span>
+        <input id="name-input" type="text" maxlength="24" placeholder="e.g. Marcos" autocomplete="off" />
+      </label>
+
+      <label class="field">
+        <span>Room code</span>
+        <input id="room-input" type="text" maxlength="8" placeholder="e.g. PARTY42" autocomplete="off" />
+      </label>
+
+      <div class="join-actions">
+        <button id="join-btn" class="btn primary">Join room</button>
+        <button id="create-btn" class="btn ghost">Create a new room</button>
+      </div>
+
+      <div id="join-qr" class="join-qr hidden">
+        <div class="qr-frame" id="join-qr-frame"></div>
+        <p class="qr-caption">📷 Scan to join room <strong id="join-qr-code">—</strong></p>
+      </div>
+
+      <p class="hint">Share the room link and friends hop in from their phones.</p>
+    </div>
+  </section>
+
+  <!-- ===== Main app ===== -->
+  <section id="app" class="screen app hidden">
+    <header class="topbar">
+      <div class="room-chip">
+        <span class="dot"></span>
+        <span>Room</span>
+        <strong id="room-label">—</strong>
+      </div>
+      <div class="topbar-actions">
+        <button id="speakers-btn" class="btn tiny" title="Make this device the party speakers">🔊 Play here</button>
+        <button id="share-btn" class="btn tiny">🔗 Share</button>
+        <button id="leave-btn" class="btn tiny ghost">Leave</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Now playing -->
+      <div class="now-playing" id="now-playing">
+        <div id="player-host" class="player-host"><div id="yt-mount"></div></div>
+        <div class="np-empty" id="np-empty">
+          <div class="np-empty-art">🎧</div>
+          <div>
+            <div class="np-empty-title">Nothing playing yet</div>
+            <div class="np-empty-sub">Add a song below to get the party started</div>
+          </div>
+        </div>
+        <div class="np-meta" id="np-meta">
+          <img id="np-thumb" class="np-thumb" alt="" />
+          <div class="np-text">
+            <div id="np-title" class="np-title">—</div>
+            <div id="np-by" class="np-by">—</div>
+          </div>
+          <div class="np-controls" id="np-controls">
+            <button id="pause-btn" class="ctl" title="Play / pause">⏯</button>
+            <button id="skip-btn" class="ctl" title="Skip">⏭</button>
+          </div>
+        </div>
+        <div class="np-banner" id="np-banner"></div>
+      </div>
+
+      <!-- Queue -->
+      <div class="queue-head">
+        <h2>Up next</h2>
+        <span id="queue-count" class="count">0</span>
+      </div>
+      <ul id="queue" class="queue"></ul>
+      <div id="queue-empty" class="queue-empty">The queue is empty — add something! 🎉</div>
+    </main>
+
+    <!-- Add bar -->
+    <div class="addbar">
+      <div class="search-wrap">
+        <input id="search-input" type="text" placeholder="Search a song, or paste a YouTube link…" autocomplete="off" />
+        <button id="search-btn" class="btn primary">Add</button>
+      </div>
+      <div id="results" class="results hidden"></div>
+    </div>
+  </section>
+
+  <!-- Share / QR modal -->
+  <div id="qr-modal" class="modal hidden">
+    <div class="modal-card">
+      <button class="modal-close" id="qr-close" aria-label="Close">✕</button>
+      <h2>Scan to join the party 🎉</h2>
+      <div class="qr-frame big" id="share-qr-frame"></div>
+      <div class="qr-room">Room <strong id="share-qr-code">—</strong></div>
+      <div class="modal-actions">
+        <button class="btn primary" id="qr-copy">📋 Copy link</button>
+        <button class="btn ghost hidden" id="qr-share">Share…</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="qrcode.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
