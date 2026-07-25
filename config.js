@@ -6,13 +6,13 @@
 // database rules and an HTTP-referrer restriction on the YouTube key instead.
 
 export const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyBKYaP8xm_OfXWBzhCuhRF948zjRgFQYvA",
+  authDomain: "test-940a2.firebaseapp.com",
+  databaseURL: "https://test-940a2.firebaseio.com",
+  projectId: "test-940a2",
+  storageBucket: "test-940a2.firebasestorage.app",
+  messagingSenderId: "724648032846",
+  appId: "1:724648032846:web:a1f917442e55f15cf2211f",
 };
 
 export const YT_API_KEY = "YOUR_YOUTUBE_DATA_API_KEY";
