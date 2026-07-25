@@ -15,4 +15,4 @@ export const firebaseConfig = {
   appId: "1:724648032846:web:a1f917442e55f15cf2211f",
 };
 
-export const YT_API_KEY = "YOUR_YOUTUBE_DATA_API_KEY";
+export const YT_API_KEY = "AIzaSyBUfv8WlXXGeiJHMXAB8Aih5Vmcf4srLpg";
