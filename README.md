@@ -6,6 +6,7 @@ queue syncs live across every phone, songs **auto-advance** when they finish,
 and guests can **upvote** to bump a track up the line.
 
 - 🔗 **No app to install** — it's a web page. Share a link, friends join.
+- 📷 **Scan-to-join QR** — hold up your screen, guests scan and they're in.
 - 🔍 **Search or paste** — find a song in-app, or paste any YouTube link.
 - ⬆️ **Upvote to reorder** — the crowd decides what plays next.
 - 🔊 **Plays itself** — the "speakers" device streams the queue in order.
@@ -116,7 +117,9 @@ Prefer something else? `netlify deploy`, Vercel, Cloudflare Pages, or even
 1. On the device hooked up to the speakers, open the site, enter your name,
    and tap **Create a new room** (or type a code). Then tap **🔊 Play here** so
    that device becomes the player.
-2. Tap **🔗 Share** to copy/AirDrop/text the room link to friends.
+2. Tap **🔗 Share** to pop up a big **QR code** — guests point their camera at
+   your screen to jump straight into the room (or copy/AirDrop/text the link).
+   A live QR also appears on the join screen as soon as a room code is set.
 3. Everyone opens the link, enters a name, and starts adding songs — search by
    name or paste a YouTube URL.
 4. Sit back. Songs play top-to-bottom and auto-advance. Upvote (▲) to move a
@@ -133,7 +136,8 @@ The others are just remotes for adding and voting.
 |------|------------|
 | `index.html` | Page markup — join screen, now-playing, queue, add bar |
 | `styles.css` | Neon party theme, mobile-first |
-| `app.js` | All the logic: Firebase sync, YouTube search/playback, voting, auto-advance |
+| `app.js` | All the logic: Firebase sync, YouTube search/playback, voting, auto-advance, QR |
+| `qrcode.js` | Vendored QR generator ([qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator), MIT) — powers scan-to-join |
 | `config.js` | Your Firebase + YouTube keys (**edit this**) |
 | `config.example.js` | Template for `config.js` |
 

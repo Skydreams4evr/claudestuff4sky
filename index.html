@@ -43,6 +43,12 @@
         <button id="join-btn" class="btn primary">Join room</button>
         <button id="create-btn" class="btn ghost">Create a new room</button>
       </div>
+
+      <div id="join-qr" class="join-qr hidden">
+        <div class="qr-frame" id="join-qr-frame"></div>
+        <p class="qr-caption">📷 Scan to join room <strong id="join-qr-code">—</strong></p>
+      </div>
+
       <p class="hint">Share the room link and friends hop in from their phones.</p>
     </div>
   </section>
@@ -106,9 +112,24 @@
     </div>
   </section>
 
+  <!-- Share / QR modal -->
+  <div id="qr-modal" class="modal hidden">
+    <div class="modal-card">
+      <button class="modal-close" id="qr-close" aria-label="Close">✕</button>
+      <h2>Scan to join the party 🎉</h2>
+      <div class="qr-frame big" id="share-qr-frame"></div>
+      <div class="qr-room">Room <strong id="share-qr-code">—</strong></div>
+      <div class="modal-actions">
+        <button class="btn primary" id="qr-copy">📋 Copy link</button>
+        <button class="btn ghost hidden" id="qr-share">Share…</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div id="toast" class="toast hidden"></div>
 
+  <script src="qrcode.js"></script>
   <script src="https://www.youtube.com/iframe_api"></script>
   <script type="module" src="app.js"></script>
 </body>

@@ -89,6 +89,37 @@ window.onYouTubeIframeAPIReady = () => { ytReady = true; };
 if (window.YT && window.YT.Player) ytReady = true;
 
 // ===================================================================
+// QR codes (scan-to-join)
+// ===================================================================
+function roomLinkFor(code) {
+  return location.origin + location.pathname + "?room=" + encodeURIComponent(code);
+}
+
+function renderQR(el, text) {
+  if (!window.qrcode) {
+    el.innerHTML = `<div class="qr-fallback">QR unavailable —<br>share the link instead</div>`;
+    return;
+  }
+  const qr = window.qrcode(0, "M"); // type 0 = auto-size, medium error correction
+  qr.addData(text);
+  qr.make();
+  el.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+}
+
+function normalizeCode(raw) {
+  return (raw || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function updateJoinQR() {
+  const code = normalizeCode($("#room-input").value);
+  const wrap = $("#join-qr");
+  if (!code) { hide(wrap); return; }
+  $("#join-qr-code").textContent = code;
+  renderQR($("#join-qr-frame"), roomLinkFor(code));
+  show(wrap);
+}
+
+// ===================================================================
 // Join / room flow
 // ===================================================================
 function randomRoom() {
@@ -101,13 +132,14 @@ function initJoinScreen() {
   const roomInput = $("#room-input");
   nameInput.value = myName;
 
-  // Pre-fill room from ?room=CODE
+  // Pre-fill room from ?room=CODE (guests who scanned a QR arrive here)
   const urlRoom = new URLSearchParams(location.search).get("room");
-  if (urlRoom) roomInput.value = urlRoom.toUpperCase();
+  if (urlRoom) roomInput.value = normalizeCode(urlRoom);
+  updateJoinQR();
 
   const doJoin = () => {
     const name = nameInput.value.trim();
-    const code = roomInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    const code = normalizeCode(roomInput.value);
     if (!name) return toast("Enter your name first");
     if (!code) return toast("Enter a room code");
     myName = name;
@@ -118,8 +150,10 @@ function initJoinScreen() {
   $("#join-btn").addEventListener("click", doJoin);
   $("#create-btn").addEventListener("click", () => {
     roomInput.value = randomRoom();
+    updateJoinQR();
     doJoin();
   });
+  roomInput.addEventListener("input", updateJoinQR);
   roomInput.addEventListener("keydown", (e) => { if (e.key === "Enter") doJoin(); });
   nameInput.addEventListener("keydown", (e) => { if (e.key === "Enter") roomInput.focus(); });
 
@@ -508,20 +542,34 @@ function advance() {
 }
 
 // ===================================================================
-// Share
+// Share / QR modal
 // ===================================================================
-async function share() {
-  const url = location.origin + location.pathname + "?room=" + encodeURIComponent(roomCode);
-  const shareData = { title: "Party Jukebox", text: "Add songs to our party queue!", url };
-  if (navigator.share) {
-    try { await navigator.share(shareData); return; } catch {}
-  }
+function openShareModal() {
+  const url = roomLinkFor(roomCode);
+  $("#share-qr-code").textContent = roomCode;
+  renderQR($("#share-qr-frame"), url);
+  // Offer the native share sheet where it exists (mostly mobile).
+  $("#qr-share").classList.toggle("hidden", !navigator.share);
+  show($("#qr-modal"));
+}
+
+function closeShareModal() { hide($("#qr-modal")); }
+
+async function copyRoomLink() {
+  const url = roomLinkFor(roomCode);
   try {
     await navigator.clipboard.writeText(url);
-    toast("Room link copied to clipboard 📋");
+    toast("Room link copied 📋");
   } catch {
     prompt("Copy this room link:", url);
   }
+}
+
+async function nativeShare() {
+  const url = roomLinkFor(roomCode);
+  try {
+    await navigator.share({ title: "Party Jukebox", text: "Add songs to our party queue!", url });
+  } catch {/* user dismissed */}
 }
 
 // ===================================================================
@@ -531,8 +579,16 @@ function initAppControls() {
   $("#search-btn").addEventListener("click", handleAdd);
   $("#search-input").addEventListener("keydown", (e) => { if (e.key === "Enter") handleAdd(); });
   $("#speakers-btn").addEventListener("click", becomeSpeakers);
-  $("#share-btn").addEventListener("click", share);
+  $("#share-btn").addEventListener("click", openShareModal);
   $("#leave-btn").addEventListener("click", leaveRoom);
+
+  // Share / QR modal controls
+  $("#qr-close").addEventListener("click", closeShareModal);
+  $("#qr-copy").addEventListener("click", copyRoomLink);
+  $("#qr-share").addEventListener("click", nativeShare);
+  $("#qr-modal").addEventListener("click", (e) => {
+    if (e.target.id === "qr-modal") closeShareModal(); // click backdrop to dismiss
+  });
 
   // Skip / pause: on the speakers device act directly; elsewhere send a command.
   $("#skip-btn").addEventListener("click", () => {
